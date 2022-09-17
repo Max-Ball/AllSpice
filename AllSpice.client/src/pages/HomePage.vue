@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div class="row justify-content-center">
     <div class="col-md-12">
       <div class="banner-img rounded elevation-5">
         <div class="row">
@@ -25,7 +25,15 @@
               </h3>
             </div>
           </div>
-          <div class="row justify-content-center align-items-end">
+          <div class="row align-items-end">
+            <div class="col-md-3">
+              <div class="mx-3 my-2">
+                <button type="button" class="btn add-btn" data-bs-toggle="modal" data-bs-target="#create-recipe-modal">
+                  <i class="mdi mdi-plus fs-2"></i>
+                </button>
+                <CreateRecipeModal />
+              </div>
+            </div>
             <div class="col-md-6">
               <div class="filter-menu d-flex align-items-center text-center elevation-5">
                 <div class="selectable filter-btn fb-left d-flex align-items-center justify-content-center">
@@ -43,14 +51,45 @@
         </div>
       </div>
     </div>
+    <div class="col-md-11 my-5">
+      <div class="row justify-content-evenly">
+        <div class="col-md-4 col-6 my-3" v-for="r in recipes" :key="r.id">
+          <Recipe :recipe="r" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Login from '../components/Login.vue';
+import { logger } from '../utils/Logger';
+import { recipesService } from '../services/RecipesService'
+import Pop from '../utils/Pop';
+import { onMounted } from 'vue';
+import Recipe from '../components/Recipe.vue';
+import { computed } from '@vue/reactivity';
+import { AppState } from '../AppState';
+import CreateRecipeModal from '../components/CreateRecipeModal.vue';
 export default {
-  name: "Home",
-  components: { Login }
+  setup() {
+    async function getRecipes() {
+      try {
+        await recipesService.getRecipes();
+      } catch (error) {
+        logger.error('[getting recipes]', error)
+        Pop.error(error)
+      }
+    }
+
+    onMounted(() => {
+      getRecipes();
+    })
+    return {
+      recipes: computed(() => AppState.recipes)
+    }
+  },
+  components: { Login, Recipe, CreateRecipeModal }
 }
 </script>
 
@@ -79,6 +118,13 @@ export default {
   height: 3em;
   width: 100%;
   // border-radius: 5px;
+}
+
+.add-btn {
+  background-color: #d8eff0;
+  padding-left: 3%;
+  padding-right: 3%;
+  border-radius: 50%;
 }
 
 .fb-left:hover {
