@@ -39,7 +39,7 @@
                         </div>
                       </span>
                       <div>
-                        <form @submit.prevent="addOrEditInstruction()">
+                        <form v-if="recipe.creatorId == account.id" @submit.prevent="addOrEditInstruction()">
                           <input type="text" placeholder="Add instructions..." class="form-control"
                             v-model="editable.body" required><br>
                           <input type="number" class="form-control" placeholder="Add number of step..."
@@ -62,7 +62,7 @@
                         </div>
                       </span>
                     </div>
-                    <form @submit.prevent="addOrEditIngredient()">
+                    <form v-if="recipe.creatorId == account.id" @submit.prevent="addOrEditIngredient()">
                       <input type="text" placeholder="Add ingredient..." class="form-control" v-model="formEdit.name"
                         required>
                       <input type="text" placeholder="Add quantity..." class="form-control my-3"
@@ -118,7 +118,7 @@ export default {
       ingredients: computed(() => AppState.ingredients),
       account: computed(() => AppState.account),
       isFavorite: computed(() => {
-        if (AppState.favoriteRecipes.find(f => f.id == AppState.activeRecipe.id)) {
+        if (AppState.recipes.find(r => r.id == AppState.activeRecipe.id)) {
           return true
         }
         return false
@@ -172,7 +172,6 @@ export default {
 
       async addToFavorites() {
         try {
-          debugger
           let newFavoriteRecipe = {
             recipeId: AppState.activeRecipe.id,
             profileId: AppState.account.id

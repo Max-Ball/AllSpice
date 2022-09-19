@@ -37,12 +37,11 @@ namespace AllSpice.Controllers
 
     [HttpDelete("{id}")]
     [Authorize]
-    public async Task<ActionResult<FavoritesRecipe>> Delete(int id)
+    public ActionResult<FavoritesRecipe> Delete(int id)
     {
       try
       {
-        Account userInfo = await HttpContext.GetUserInfoAsync<Account>();
-        string message = _favoritesService.Delete(userInfo, id);
+        string message = _favoritesService.Delete(id);
         return Ok(message);
       }
       catch (Exception e)

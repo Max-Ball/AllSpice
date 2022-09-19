@@ -36,13 +36,9 @@ namespace AllSpice.Services
       return favoritesRecipe;
     }
 
-    internal string Delete(Account userInfo, int id)
+    internal string Delete(int id)
     {
       FavoritesRecipe favoritesRecipe = _recipesService.GetFavoriteRecipeById(id);
-      if (userInfo.Id != favoritesRecipe.CreatorId)
-      {
-        throw new Exception("You cannot delete this from another users favorites");
-      }
       _favoritesRepo.Delete(id);
       return $"{favoritesRecipe.Title} has been removed from favorites";
     }
