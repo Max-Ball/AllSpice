@@ -99,6 +99,8 @@ INSERT INTO favorites
 VALUES
 (1, '63237c712d0c7a123937383b');
 
+TRUNCATE TABLE favorites;
+
 
 SELECT
 f.*,

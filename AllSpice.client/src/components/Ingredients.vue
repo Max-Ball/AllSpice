@@ -3,8 +3,21 @@
     {{ingredient.name}}
     {{ingredient.quantity}}
     <div v-if="recipe.creatorId == account.id">
-      <i class="mdi mdi-delete selectable" @click="deleteIngredient()"></i>
-      <i class="mdi mdi-pencil fs-5 dropdown-item selectable" @click="setIngredient(ingredient)"></i>
+      <div class="dropdown">
+        <i class="mdi mdi-dots-horizontal f-20" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        </i>
+        <ul class="dropdown-menu">
+          <li>
+            <i class="mdi mdi-delete fs-5 dropdown-item selectable" @click="deleteIngredient()">
+              Delete Ingredient</i>
+          </li>
+          <li>
+            <i class="mdi mdi-pencil fs-5 dropdown-item selectable" @click="setIngredient(ingredient)">
+              Edit Ingredient
+            </i>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>

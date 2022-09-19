@@ -9,19 +9,21 @@
             </div>
             <div class="col-md-8">
               <div class="row align-items-center">
-                <span v-if="isFavorite == true">
-                  <i class="mdi mdi-heart fs-3 selectable"></i>
-                </span>
-                <span v-if="isFavorite == false">
-                  <i class="mdi mdi-heart-outline fs-3 selectable" @click="addToFavorites()"></i>
-                </span>
+                <div class="col-md-12 d-flex justify-content-between">
+                  <span v-if="!isFavorite">
+                    <i class="mdi mdi-heart-outline fs-3 selectable" @click="addToFavorites()"></i>
+                  </span>
+                  <span v-else>
+                    <i class="mdi mdi-heart fs-3 selectable" @click="removeFromFavorites()"></i>
+                  </span>
+                  <span v-if="recipe.creatorId == account.id">
+                    <i class="mdi mdi-delete fs-3 selectable" @click="deleteRecipe()"></i>
+                  </span>
+                </div>
                 <div class="fs-2">
                   {{recipe.title}}
                   <span class="fs-6 glass px-2 py-1 rounded-pill">
                     {{recipe.category}}
-                  </span>
-                  <span v-if="recipe.creatorId == account.id">
-                    <i class="mdi mdi-delete selectable" @click="deleteRecipe()"></i>
                   </span>
                 </div>
                 <div class="fs-4">
@@ -37,11 +39,14 @@
                         </div>
                       </span>
                       <div>
-                        <form class="input-group" @submit.prevent="addOrEditInstruction()">
-                          <input type="text" placeholder="Add step..." class="form-control" v-model="editable.body"
-                            required>
-                          <input type="number" class="form-control" v-model="editable.step" required>
-                          <button class="btn btn-primary"><i class="mdi mdi-plus"></i></button>
+                        <form @submit.prevent="addOrEditInstruction()">
+                          <input type="text" placeholder="Add instructions..." class="form-control"
+                            v-model="editable.body" required><br>
+                          <input type="number" class="form-control" placeholder="Add number of step..."
+                            v-model="editable.step" required>
+                          <div class="mt-2">
+                            <button class="btn btn-primary w-100">Add Step<i class="mdi mdi-plus"></i></button>
+                          </div>
                         </form>
                       </div>
                     </div>
@@ -50,19 +55,19 @@
                 <div class="col-md-6">
                   <div class="card my-3">
                     <div class="card-body">
-                      <h5 class="card-title">Recipe Steps</h5>
+                      <h5 class="card-title">Recipe Ingredients</h5>
                       <span class="card-text">
                         <div v-for="i in ingredients" :key="i.id">
                           <Ingredients :ingredient="i" />
                         </div>
                       </span>
                     </div>
-                    <form class="input-group" @submit.prevent="addOrEditIngredient()">
+                    <form @submit.prevent="addOrEditIngredient()">
                       <input type="text" placeholder="Add ingredient..." class="form-control" v-model="formEdit.name"
                         required>
-                      <input type="text" placeholder="Add quantity..." class="form-control" v-model="formEdit.quantity"
-                        required>
-                      <button class="btn btn-primary"><i class="mdi mdi-plus"></i></button>
+                      <input type="text" placeholder="Add quantity..." class="form-control my-3"
+                        v-model="formEdit.quantity" required>
+                      <button class="btn btn-primary w-100"><i class="mdi mdi-plus"></i></button>
                     </form>
                   </div>
                 </div>
@@ -112,7 +117,13 @@ export default {
       instructions: computed(() => AppState.instructions),
       ingredients: computed(() => AppState.ingredients),
       account: computed(() => AppState.account),
-      isFavorite: computed(() => AppState.isFavorite),
+      isFavorite: computed(() => {
+        if (AppState.favoriteRecipes.find(f => f.id == AppState.activeRecipe.id)) {
+          return true
+        }
+        return false
+
+      }),
 
       async deleteRecipe() {
         try {
@@ -161,6 +172,7 @@ export default {
 
       async addToFavorites() {
         try {
+          debugger
           let newFavoriteRecipe = {
             recipeId: AppState.activeRecipe.id,
             profileId: AppState.account.id
@@ -168,6 +180,19 @@ export default {
           await recipesService.addToFavorites(newFavoriteRecipe)
         } catch (error) {
           logger.log('[adding to favorites]')
+          Pop.error(error)
+        }
+      },
+
+      async removeFromFavorites() {
+        try {
+          const yes = await Pop.confirm('Are you sure you want to remove this from your favorites?')
+          if (!yes) {
+            return
+          }
+          await recipesService.removeFromFavorites(AppState.activeRecipe.id)
+        } catch (error) {
+          logger.error('[removing from favorites]', error)
           Pop.error(error)
         }
       }

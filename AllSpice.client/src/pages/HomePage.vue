@@ -4,8 +4,8 @@
       <div class="banner-img rounded elevation-5">
         <div class="row">
           <div class="col-md-5 px-4 py-3">
-            <form class="input-group">
-              <input type="text" class="form-control" placeholder="Search Recipes">
+            <form class="input-group" @submit.prevent="search()">
+              <input type="text" class="form-control" placeholder="Search Recipes" v-model="query" required>
               <button class="btn cs-btn">
                 <i class="mdi mdi-magnify text-light"></i>
               </button>
@@ -36,10 +36,12 @@
             </div>
             <div class="col-md-6">
               <div class="filter-menu d-flex align-items-center text-center elevation-5">
-                <div class="selectable filter-btn fb-left d-flex align-items-center justify-content-center">
+                <div class="selectable filter-btn fb-left d-flex align-items-center justify-content-center"
+                  @click="getRecipes()">
                   HOME
                 </div>
-                <div class="selectable filter-btn d-flex align-items-center justify-content-center">
+                <div class="selectable filter-btn d-flex align-items-center justify-content-center"
+                  @click="getUserRecipes()">
                   MY RECIPES
                 </div>
                 <div class="selectable filter-btn fb-right d-flex align-items-center justify-content-center"
@@ -67,16 +69,19 @@ import Login from '../components/Login.vue';
 import { logger } from '../utils/Logger';
 import { recipesService } from '../services/RecipesService'
 import Pop from '../utils/Pop';
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import Recipe from '../components/Recipe.vue';
 import { computed } from '@vue/reactivity';
 import { AppState } from '../AppState';
 import CreateRecipeModal from '../components/CreateRecipeModal.vue';
 export default {
   setup() {
+    const query = ref('')
+
     async function getRecipes() {
       try {
         await recipesService.getRecipes();
+        console.log(AppState.favoriteRecipes);
       } catch (error) {
         logger.error('[getting recipes]', error)
         Pop.error(error)
@@ -87,7 +92,20 @@ export default {
       getRecipes();
     })
     return {
+      getRecipes,
+      query,
       recipes: computed(() => AppState.recipes),
+      favoriteRecipes: computed(() => AppState.favoriteRecipes),
+
+      async search() {
+        try {
+          await recipesService.search(query.value)
+        } catch (error) {
+          logger.error('[searching]', error)
+          Pop.error(error)
+        }
+      },
+
       async getFavorites() {
         try {
           await recipesService.getFavorites()
@@ -95,7 +113,19 @@ export default {
           logger.error('[getting favorites]', error)
           Pop.error(error)
         }
+      },
+
+      async getUserRecipes() {
+        try {
+          await recipesService.getUserRecipes()
+          console.log(AppState.recipes);
+        } catch (error) {
+          logger.error('[getting user recipes]', error)
+          Pop.error(error)
+        }
       }
+
+
     }
   },
   components: { Login, Recipe, CreateRecipeModal }
