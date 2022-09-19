@@ -26,6 +26,8 @@
 
 <script>
 import { recipesService } from '../services/RecipesService';
+import { ingredientsService } from '../services/IngredientsService';
+import { instructionsService } from '../services/InstructionsService'
 import { logger } from '../utils/Logger';
 import Pop from '../utils/Pop';
 import RecipeModal from './RecipeModal.vue';
@@ -39,8 +41,28 @@ export default {
       async getRecipeById() {
         try {
           await recipesService.getRecipeById(props.recipe.id)
+          this.getIngredients()
+          this.getInstructions()
         } catch (error) {
           logger.error('[getting recipe by id]', error)
+          Pop.error(error)
+        }
+      },
+
+      async getIngredients() {
+        try {
+          await ingredientsService.getIngredients(props.recipe.id);
+        } catch (error) {
+          logger.error('[getting ingredients]', error)
+          Pop.error(error)
+        }
+      },
+
+      async getInstructions() {
+        try {
+          await instructionsService.getInstructions(props.recipe.id)
+        } catch (error) {
+          logger.error('[getting instructions]')
           Pop.error(error)
         }
       }

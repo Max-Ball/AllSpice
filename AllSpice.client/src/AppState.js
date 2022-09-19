@@ -12,4 +12,10 @@ export const AppState = reactive({
 
   ingredients: [],
 
+  activeIngredient: {},
+
+  instructions: [],
+
+  activeInstruction: {},
+
 })

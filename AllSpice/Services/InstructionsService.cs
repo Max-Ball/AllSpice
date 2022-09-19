@@ -36,7 +36,7 @@ namespace AllSpice.Services
       return instruction;
     }
 
-    internal object CreateInstructions(Account userInfo, Instruction newInstruction)
+    internal Instruction CreateInstructions(Account userInfo, Instruction newInstruction)
     {
       Recipe recipe = _recipesService.GetById(newInstruction.RecipeId);
       if (userInfo.Id != recipe.CreatorId)

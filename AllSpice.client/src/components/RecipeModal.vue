@@ -14,24 +14,51 @@
                   <span class="fs-6 glass px-2 py-1 rounded-pill">
                     {{recipe.category}}
                   </span>
+                  <span v-if="recipe.creatorId == account.id">
+                    <i class="mdi mdi-delete selectable" @click="deleteRecipe()"></i>
+                  </span>
                 </div>
                 <div class="fs-4">
                   {{recipe.subtitle}}
                 </div>
                 <div class="col-md-6">
-                  <div class="card">
+                  <div class="card my-3">
                     <div class="card-body">
                       <h5 class="card-title">Recipe Steps</h5>
                       <span class="card-text">
-                        instructions1
-                        instructions2
-                        instructions3
+                        <div v-for="i in instructions" :key="i.id">
+                          <Instructions :instruction="i" />
+                        </div>
                       </span>
+                      <div>
+                        <form class="input-group" @submit.prevent="addOrEditInstruction()">
+                          <input type="text" placeholder="Add step..." class="form-control" v-model="editable.body"
+                            required>
+                          <input type="number" class="form-control" v-model="editable.step" required>
+                          <button class="btn btn-primary"><i class="mdi mdi-plus"></i></button>
+                        </form>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6">
-                  Card1
+                  <div class="card my-3">
+                    <div class="card-body">
+                      <h5 class="card-title">Recipe Steps</h5>
+                      <span class="card-text">
+                        <div v-for="i in ingredients" :key="i.id">
+                          <Ingredients :ingredient="i" />
+                        </div>
+                      </span>
+                    </div>
+                    <form class="input-group" @submit.prevent="addOrEditIngredient()">
+                      <input type="text" placeholder="Add ingredient..." class="form-control" v-model="formEdit.name"
+                        required>
+                      <input type="text" placeholder="Add quantity..." class="form-control" v-model="formEdit.quantity"
+                        required>
+                      <button class="btn btn-primary"><i class="mdi mdi-plus"></i></button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
@@ -46,35 +73,87 @@
 
 
 <script>
-import { computed } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
 import { AppState } from '../AppState';
 import { logger } from '../utils/Logger';
 import { ingredientsService } from '../services/IngredientsService'
 import Pop from '../utils/Pop';
-import { onMounted } from 'vue';
+import { watchEffect } from 'vue';
+import Instructions from './Instructions.vue';
+import Ingredients from './Ingredients.vue';
+import { instructionsService } from '../services/InstructionsService';
+import { recipesService } from '../services/RecipesService';
+
 
 export default {
-  props: {
-    recipe: { type: Object, required: true }
-  },
+  setup() {
+    const editable = ref({})
+    const formEdit = ref({})
 
-  setup(props) {
-    async function getIngredients() {
-      try {
-        await ingredientsService.getIngredients(props.recipe.id);
-      } catch (error) {
-        logger.error('[getting ingredients]', error)
-        Pop.error(error)
-      }
-    }
+    watchEffect(() => {
+      if (!AppState.activeInstruction) {
+        return
+      } editable.value = { ...AppState.activeInstruction }
 
-    onMounted(() => {
-      getIngredients();
+      if (!AppState.activeIngredient) {
+        return
+      } formEdit.value = { ...AppState.activeIngredient }
     })
     return {
-      recipe: computed(() => AppState.activeRecipe)
+      editable,
+      formEdit,
+      recipe: computed(() => AppState.activeRecipe),
+      instructions: computed(() => AppState.instructions),
+      ingredients: computed(() => AppState.ingredients),
+      account: computed(() => AppState.account),
+
+      async deleteRecipe() {
+        try {
+          const yes = await Pop.confirm('Are you sure you want to delete this recipe?')
+          const id = AppState.activeRecipe.id
+          if (!yes) {
+            return
+          }
+          await recipesService.deleteRecipe(id)
+        } catch (error) {
+          logger.error('[deleting recipe]', error)
+          Pop.error(error)
+        }
+      },
+
+      async addOrEditInstruction() {
+        try {
+
+          const id = AppState.activeRecipe.id
+          console.log(editable.value);
+          if (editable.value.id) {
+            await instructionsService.editInstruction(editable.value)
+          } else {
+            await instructionsService.addInstruction(editable.value, id)
+          }
+        } catch (error) {
+          logger.error('[adding instruction]', error)
+          Pop.error(error)
+        }
+      },
+
+      async addOrEditIngredient() {
+        try {
+          const id = AppState.activeRecipe.id
+          debugger
+          if (formEdit.value.id) {
+            await ingredientsService.editIngredient(formEdit.value)
+          } else {
+            await ingredientsService.addIngredient(formEdit.value, id)
+          }
+        } catch (error) {
+          logger.error('[adding ingredient]', error)
+          Pop.error(error)
+        }
+      }
     };
   },
+  components: { Instructions, Ingredients }
 };
 </script>
 
@@ -94,5 +173,9 @@ export default {
   background-color: rgb(216, 239, 240, );
   color: rgb(16, 17, 17);
   width: 100%;
+}
+
+.card {
+  min-height: 60-vh;
 }
 </style>

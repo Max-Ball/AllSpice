@@ -45,7 +45,7 @@ namespace AllSpice.Repositories
       return instruction;
     }
 
-    internal object CreateInstructions(Instruction newInstruction)
+    internal Instruction CreateInstructions(Instruction newInstruction)
     {
       string sql = @"
       INSERT INTO instructions
