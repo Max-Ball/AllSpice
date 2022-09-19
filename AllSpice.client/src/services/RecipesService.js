@@ -23,6 +23,20 @@ class RecipesService {
     await api.delete(`/api/recipes/${id}`)
     AppState.recipes = AppState.recipes.filter(r => r.id != id)
   }
+
+  async addToFavorites(newFavoriteRecipe) {
+    const res = await api.post('/api/favorites', newFavoriteRecipe)
+    AppState.favoriteRecipes.push(res.data)
+    AppState.isFavorite = false;
+    console.log(AppState.favoriteRecipes);
+  }
+
+  async getFavorites() {
+    debugger
+    const res = await api.get('/account/recipes')
+    AppState.favoriteRecipes = res.data
+  }
+
 }
 
 export const recipesService = new RecipesService();

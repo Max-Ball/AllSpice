@@ -10,9 +10,6 @@
               {{recipe.category}}
             </span>
           </div>
-          <span>
-            <i class="mdi mdi-heart fs-3"></i>
-          </span>
         </div>
       </div>
       <div class="glass rounded px-2 py-1">
@@ -31,6 +28,7 @@ import { instructionsService } from '../services/InstructionsService'
 import { logger } from '../utils/Logger';
 import Pop from '../utils/Pop';
 import RecipeModal from './RecipeModal.vue';
+import { AppState } from '../AppState';
 
 export default {
   props: {

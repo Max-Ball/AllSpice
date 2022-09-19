@@ -42,7 +42,8 @@
                 <div class="selectable filter-btn d-flex align-items-center justify-content-center">
                   MY RECIPES
                 </div>
-                <div class="selectable filter-btn fb-right d-flex align-items-center justify-content-center">
+                <div class="selectable filter-btn fb-right d-flex align-items-center justify-content-center"
+                  @click="getFavorites()">
                   FAVORITES
                 </div>
               </div>
@@ -86,7 +87,15 @@ export default {
       getRecipes();
     })
     return {
-      recipes: computed(() => AppState.recipes)
+      recipes: computed(() => AppState.recipes),
+      async getFavorites() {
+        try {
+          await recipesService.getFavorites()
+        } catch (error) {
+          logger.error('[getting favorites]', error)
+          Pop.error(error)
+        }
+      }
     }
   },
   components: { Login, Recipe, CreateRecipeModal }

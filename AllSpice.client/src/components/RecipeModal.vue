@@ -9,6 +9,12 @@
             </div>
             <div class="col-md-8">
               <div class="row align-items-center">
+                <span v-if="isFavorite == true">
+                  <i class="mdi mdi-heart fs-3 selectable"></i>
+                </span>
+                <span v-if="isFavorite == false">
+                  <i class="mdi mdi-heart-outline fs-3 selectable" @click="addToFavorites()"></i>
+                </span>
                 <div class="fs-2">
                   {{recipe.title}}
                   <span class="fs-6 glass px-2 py-1 rounded-pill">
@@ -106,6 +112,7 @@ export default {
       instructions: computed(() => AppState.instructions),
       ingredients: computed(() => AppState.ingredients),
       account: computed(() => AppState.account),
+      isFavorite: computed(() => AppState.isFavorite),
 
       async deleteRecipe() {
         try {
@@ -148,6 +155,19 @@ export default {
           }
         } catch (error) {
           logger.error('[adding ingredient]', error)
+          Pop.error(error)
+        }
+      },
+
+      async addToFavorites() {
+        try {
+          let newFavoriteRecipe = {
+            recipeId: AppState.activeRecipe.id,
+            profileId: AppState.account.id
+          }
+          await recipesService.addToFavorites(newFavoriteRecipe)
+        } catch (error) {
+          logger.log('[adding to favorites]')
           Pop.error(error)
         }
       }

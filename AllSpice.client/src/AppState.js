@@ -18,4 +18,8 @@ export const AppState = reactive({
 
   activeInstruction: {},
 
+  favoriteRecipes: [],
+
+  isFavorite: false,
+
 })
