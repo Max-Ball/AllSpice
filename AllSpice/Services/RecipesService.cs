@@ -42,6 +42,7 @@ namespace AllSpice.Services
       {
         throw new Exception("This is not your recipe to delete");
       }
+
       _RecipesRepo.Delete(id);
       return $"Deleted the {recipe.Title}";
 

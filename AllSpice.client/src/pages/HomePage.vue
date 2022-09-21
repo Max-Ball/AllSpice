@@ -56,7 +56,7 @@
     </div>
     <div class="col-md-11 my-5">
       <div class="row justify-content-evenly">
-        <div class="col-md-4 col-6 my-3" v-for="r in recipes" :key="r.id">
+        <div class="col-md-3 col-6 my-3" v-for="r in recipes" :key="r.id">
           <Recipe :recipe="r" />
         </div>
       </div>

@@ -75,7 +75,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -118,7 +117,7 @@ export default {
       ingredients: computed(() => AppState.ingredients),
       account: computed(() => AppState.account),
       isFavorite: computed(() => {
-        if (AppState.recipes.find(r => r.id == AppState.activeRecipe.id)) {
+        if (AppState.favoriteRecipes.find(f => f.id == AppState.activeRecipe.id)) {
           return true
         }
         return false
@@ -133,6 +132,7 @@ export default {
             return
           }
           await recipesService.deleteRecipe(id)
+          Pop.success("recipe deleted!")
         } catch (error) {
           logger.error('[deleting recipe]', error)
           Pop.error(error)

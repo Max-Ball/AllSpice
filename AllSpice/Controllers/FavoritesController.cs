@@ -37,7 +37,7 @@ namespace AllSpice.Controllers
 
     [HttpDelete("{id}")]
     [Authorize]
-    public ActionResult<FavoritesRecipe> Delete(int id)
+    public ActionResult<string> Delete(int id)
     {
       try
       {

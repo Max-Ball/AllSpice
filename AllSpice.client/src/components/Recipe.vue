@@ -2,18 +2,18 @@
   <div class="card text-bg-dark elevation-4 selectable" data-bs-toggle="modal" data-bs-target="#recipe-modal"
     @click="getRecipeById()">
     <img :src="recipe.picture" class="card-img recipe-pic" alt="...">
-    <div class="card-img-overlay d-flex flex-column justify-content-between">
+    <div class="card-img-overlay p-0 d-flex flex-column justify-content-between">
       <div class="row justify-content-between">
         <div class="col-md-12 d-flex justify-content-between align-items-center">
-          <div>
+          <div class="m-3">
             <span class="fs-6 glass px-2 py-1 rounded-pill">
               {{recipe.category}}
             </span>
           </div>
         </div>
       </div>
-      <div class="glass rounded px-2 py-1">
-        <span class="card-title fs-5">{{recipe.title}}</span><br>
+      <div class="glass rounded px-2 py-1 elevation-5">
+        <span class="card-title fs-4">{{recipe.title}}</span><br>
         <span class="card-text">{{recipe.subtitle}}</span>
       </div>
     </div>

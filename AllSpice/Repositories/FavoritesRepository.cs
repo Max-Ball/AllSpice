@@ -30,7 +30,6 @@ namespace AllSpice.Repositories
 
       List<FavoritesRecipe> recipes = _db.Query<Favorites, FavoritesRecipe, Account, FavoritesRecipe>(sql, (f, r, a) =>
       {
-        r.CreatorId = a.Id;
         r.FavoritesRecipeId = f.Id;
         r.Creator = a;
         return r;
@@ -55,7 +54,7 @@ namespace AllSpice.Repositories
     {
       string sql = @"
       DELETE FROM favorites
-      WHERE id = @id;
+      WHERE recipeId = @id;
       ";
       _db.Execute(sql, new { id });
     }

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS recipes(
   category VARCHAR(255) NOT NULL,
   creatorId VARCHAR(255) NOT NULL,
 
-  FOREIGN KEY(creatorId) REFERENCES accounts(id)
+  FOREIGN KEY(creatorId) REFERENCES accounts(id) ON DELETE CASCADE
 )default charset utf8 COMMENT '';
 
 INSERT INTO recipes
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS ingredients(
   quantity VARCHAR(255) NOT NULL,
   recipeId INT NOT NULL,
 
-  FOREIGN KEY(recipeId) REFERENCES recipes(id)
+  FOREIGN KEY(recipeId) REFERENCES recipes(id) ON DELETE CASCADE
 )default charset utf8 COMMENT '';
 
 INSERT INTO ingredients
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS instructions(
   body VARCHAR(255) NOT NULL,
   recipeId INT NOT NULL,
 
-  FOREIGN KEY(recipeId) REFERENCES recipes(id)
+  FOREIGN KEY(recipeId) REFERENCES recipes(id) ON DELETE CASCADE
 )default charset utf8 COMMENT '';
 
 INSERT INTO instructions
@@ -90,8 +90,8 @@ CREATE TABLE IF NOT EXISTS favorites(
 id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
 recipeId INT NOT NULL,
 profileId VARCHAR(255) NOT NULL,
-FOREIGN KEY (recipeId) REFERENCES recipes(id),
-FOREIGN KEY (profileId) REFERENCES accounts(id)
+FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE CASCADE,
+FOREIGN KEY (profileId) REFERENCES accounts(id) ON DELETE CASCADE
 ) default charset utf8 COMMENT '';
 
 INSERT INTO favorites
@@ -110,3 +110,4 @@ FROM favorites f
 JOIN recipes r ON f.recipeId = r.id
 JOIN accounts a ON r.creatorId = a.id
 WHERE f.profileId = '63237c712d0c7a123937383b';
+

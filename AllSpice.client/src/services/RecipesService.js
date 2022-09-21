@@ -45,7 +45,7 @@ class RecipesService {
 
   async removeFromFavorites(recipeId) {
     await api.delete(`/api/favorites/${recipeId}`)
-    AppState.recipes = AppState.recipes.filter(r => r.id != recipeId)
+    AppState.favoriteRecipes = AppState.favoriteRecipes.filter(f => f.id != recipeId)
   }
 
   async search(query) {
